@@ -1,0 +1,1 @@
+Script usado para gerar o arquivo CSV, interpretado pelo programa Adobe InDesign, para a montagem de diários de classe. O script separa os alunos de acordo com a turma e gera um CSV contendo os nomes e números dos alunos, segmento, ano e turma para cada turma listada, salvando-o na pasta indicada pela variável "caminho".

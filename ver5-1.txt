@@ -1,0 +1,82 @@
+Function gerarDiario()
+
+    Dim turma, ano, selecaoFinal, selecaoInicial, caminho, nomearq, cabeca As String
+    Dim mudanca, indice, arquivo, repeticao As Integer
+    Dim sel, rng As Range
+    
+    turma = Range("F1").Value
+    ano = Range("E1").Value
+    indice = 1
+    selecaoInicial = "1"
+    caminho = "P:\2023\"
+    arquivo = FreeFile
+    cabeca = "segmento, ano, turma, num1, nome1, num2, nome2, num3, nome3, num4, nome4, num5, nome5, num6, nome6, num7, nome7, num8, nome8, num9, nome9, num10, nome10, num11, nome11, num12, nome12, num13, nome13, num14, nome14, num15, nome15, num16, nome16, num17, nome17, num18, nome18, num19, nome19, num20, nome20, num21, nome21, num22, nome22, num23, nome23, num24, nome24, num25, nome25, num26, nome26, num27, nome27, num28, nome28, num29, nome29, num30, nome30, num31, nome31, num32, nome32, num33, nome33, num34, nome34, num35, nome35, num36, nome36, num37, nome37, num38, nome38, num39, nome39, num40, nome40, num41, nome41, num42, nome42, num43, nome43, num44, nome44, num45, nome45, num46, nome46, num47, nome47, num48, nome48, num49, nome49, num50, nome50"
+       
+    For repeticao = 2 To 1253 'definir aqui a quantidade de linhas a serem lidas
+		
+		'se a turma ou ano for diferente da linha anterior, iniciamos o procedimento
+        If (turma <> Range("F" & repeticao) Or ano <> Range("E" & repeticao)) Then
+        
+            If ((repeticao - mudanca) = 1) Then 'caso a turma mude com apenas uma célula, selecionamos apenas uma linha
+            
+                selecaoFinal = mudanca
+                
+            End If
+            
+            'nesse momento, selecaoInicial e selecaoFinal estão devidamente configuradas.
+            
+            If (turma <> "00" And turma <> "01") Then 'eliminamos as turmas "00" e "01", que não existem de fato
+                
+                'segmento, ano e turma
+                Range("G" & selecaoInicial & ",E" & selecaoInicial & ",F" & selecaoInicial & "").Select 
+                Set sel = Application.Selection
+                
+                resultado = ""
+                
+                For Each rng In sel
+                
+                    If resultado = "" Then
+                        resultado = rng.Value
+                    Else
+                        resultado = resultado & "," & rng.Value
+                    End If
+                    
+                Next
+                
+                'nomes
+                Range("B" & selecaoInicial & ":C" & selecaoFinal & "").Select
+                Set sel = Application.Selection
+                
+                For Each rng In sel
+                
+                    resultado = resultado & "," & rng.Value
+                    
+                Next
+                
+                Range("J" & indice).Value = resultado 'inscrição do resultado na coluna J para verificação
+                indice = indice + 1 'linha onde será posto o resultado, aqui pulamos para a próxima linha
+                
+                nomearq = Range("E" & selecaoInicial).Value & "-" & Range("F" & selecaoInicial).Value & ".csv" 'nome do arquivo = segmento + turma
+                
+                Open caminho & nomearq For Output As #arquivo
+                    Print #arquivo, cabeca
+                    Print #arquivo, resultado
+                Close #arquivo
+                
+            End If
+            
+            'agora, preparamos para a próxima repetição
+            turma = Range("F" & repeticao) 'atualizamos o valor das variáveis que serão comparadas
+            ano = Range("E" & repeticao)
+            selecaoInicial = repeticao 'e a seleção inicial
+            mudanca = repeticao  'e armazenamos a posição de mudança
+            
+        Else
+        
+            selecaoFinal = repeticao 'se não houve mudança, apenas incluímos a célula na seleção
+            
+        End If
+        
+    Next repeticao
+	
+End Function
